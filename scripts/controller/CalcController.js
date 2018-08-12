@@ -1,6 +1,7 @@
 class CalcController{
     
     constructor(){
+        this._operation = [];
         this._locale = 'pt-BR'
         this._displayCalcEl = document.querySelector("#display");
         this._dateEl = document.querySelector("#data");
@@ -19,6 +20,7 @@ class CalcController{
 
         }, 1000 )
 
+        this.setLastNumberToDisplay();
 
     }
 
@@ -35,16 +37,20 @@ class CalcController{
         
         this._operation = [];
 
+        this.setLastNumberToDisplay();
+
     }
 
     clearEntry(){
        
         this._operation.pop();
 
+        this.setLastNumberToDisplay();
+
     }
 
     getLastOperation(){
-      return  this._operation[this._operation.length-1];
+      return this._operation[this._operation.length-1];
 
     }
 
@@ -52,7 +58,7 @@ class CalcController{
         this._operation[this._operation.length - 1] = value;
     }
 
-    isOperation(value){
+    isOperator(value){
         return (['+','-','*','%','/'].indexOf(value) > -1);
     }
 
@@ -62,7 +68,7 @@ class CalcController{
 
         if (this._operation.length > 3) {
             
-            let last = this._operation.pop();
+           
 
             this.calc();
         }
@@ -70,15 +76,34 @@ class CalcController{
 
     calc() {
 
-        let last = this._operation.pop();
+        let last = '';
+
+        if (this._operation.length > 3) {
+
+            last = this._operation.pop()
+        }
 
         let result = eval(this._operation.join(""));
 
-        this._operation = [result, last];
+        if (last == '%') {
 
-        this.setLastNumberToDisplay();
+            result /= 100;
 
-         
+            this._operation = [result];
+
+        } else {
+
+            this._operation = [result];
+
+            if (last) {
+
+                 this._operation.push(last);
+
+            } 
+
+        }
+
+        this.setLastNumberToDisplay();      
 
     }
 
@@ -88,12 +113,18 @@ class CalcController{
 
         for (let i = this._operation.length-1; i >= 0; i--){
 
-                if (!this.isOperation(this._operation[i])) {
+                if (!this.isOperator(this._operation[i])) {
 
                     lastNumber = this._operation[i];
                     break;
 
                 }    
+        }
+
+        if (!lastNumber){
+
+            lastNumber = 0;
+
         }
 
         this.displayCalc = lastNumber;
@@ -102,29 +133,28 @@ class CalcController{
     
     addOperation(value){
 
-        if (isNaN(this.getLastOperation)) {
+        if (isNaN(this.getLastOperation())) {
 
-            if (this.isOperation(value)) {
+            if (this.isOperator(value)) {
 
                 this.setLastOperation(value);
 
-            }
-            else if(isNaN(value)) {
+            } else if(isNaN(value)) {
 
-            }
-            else {
-                this._operation.push(value);
+                console.log('outra coisa', value);
 
-                this.setLastNumberToDisplay();
-            }     
-            
+            }  else {
 
-        }
-        else {
+                 this.pushOperation(value);
 
-            if  (this.isOperation(value)) {
+                 this.setLastNumberToDisplay();
+            }           
 
-                this._operation.push(value);
+        }  else {
+
+            if  (this.isOperator(value)) {
+
+                this.pushOperation(value);
 
             } else {
                 
@@ -137,6 +167,7 @@ class CalcController{
         }
 
         console.log(this._operation);
+
     }
 
     setError(){
@@ -144,8 +175,6 @@ class CalcController{
         this.displayCalc = "Error";
 
     }
-
-    
 
     
     execBtn(value){
@@ -181,7 +210,7 @@ class CalcController{
             break;
 
             case 'igual':
-                this.addOperation('=');
+                this.calc();
             break;
 
             case 'ponto':
@@ -214,7 +243,7 @@ class CalcController{
         
         let buttons = document.querySelectorAll("#buttons > g, #parts > g");
         
-        buttons.forEach((btn, index)=>{
+        buttons.forEach((btn, index) => {
 
             this.addEventListenerAll(btn, "click drag", e => {
                 
