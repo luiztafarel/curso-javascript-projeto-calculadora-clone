@@ -193,7 +193,7 @@ class CalcController{
         }
 
         console.log('lastoperator', this._lastOperator);
-        console.log('lasnumber', this._lastNumber);
+        console.log('lastnumber', this._lastNumber);
 
         let result = this.getResult();
 
@@ -414,7 +414,6 @@ class CalcController{
 
     get displayDate(){
         return this._dateEl.innerHTML;
-
     }
 
     set displayDate(value){
@@ -426,6 +425,13 @@ class CalcController{
     }
 
     set displayCalc(value){
+
+        if (value.toString().length > 10) {
+
+           value = 'Error';
+
+        }
+
         this._displayCalcEl.innerHTML = value;
     }
 
