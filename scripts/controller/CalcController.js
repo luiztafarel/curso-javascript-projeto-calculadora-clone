@@ -86,6 +86,30 @@ class CalcController{
 
     }
 
+    initButtonsEvents(){
+        
+        let buttons = document.querySelectorAll("#buttons > g, #parts > g");
+        
+        buttons.forEach((btn, index) => {
+
+            this.addEventListenerAll(btn, "click drag", e => {
+                
+                let textBtn = btn.className.baseVal.replace("btn-", "");
+
+                this.execBtn(textBtn);
+    
+            });
+
+            this.addEventListenerAll(btn, "mouseover mouseup mousedown", e => {
+    
+                btn.style.cursor = "pointer"; 
+            });
+
+
+        });
+        
+    }
+
     initKeyboard() {
 
         document.addEventListener('keyup', e => {
@@ -343,10 +367,8 @@ class CalcController{
 
     }
 
-    
     execBtn(value){
-
-        
+      
         this.playAudio();
 
         switch(value){
@@ -404,34 +426,9 @@ class CalcController{
                 this.setError();
             break;
 
-
         }
 
-    }
-
-    initButtonsEvents(){
-        
-        let buttons = document.querySelectorAll("#buttons > g, #parts > g");
-        
-        buttons.forEach((btn, index) => {
-
-            this.addEventListenerAll(btn, "click drag", e => {
-                
-                let textBtn = btn.className.baseVal.replace("btn-", "");
-
-                this.execBtn(textBtn);
-    
-            });
-
-            this.addEventListenerAll(btn, "mouseover mouseup mousedown", e => {
-    
-                btn.style.cursor = "pointer"; 
-            });
-
-
-        });
-        
-    }
+    } 
 
     setDisplayDateTime (){
         this.displayDate = this.currentDate.toLocaleDateString(this._locale);
